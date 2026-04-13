@@ -3,8 +3,11 @@ import {
   StyleSheet, Alert, TouchableOpacity
 } from 'react-native';
 
+// Componente que muestra la lista principal de piezas registradas
+// Recibe las piezas y las funciones de acción mediante props
 export default function ListaPiezas({ piezas, onAgregar, onEliminar, onVerDetalle }) {
 
+  // Muestra una alerta de confirmación antes de eliminar una pieza
   const confirmarEliminar = (id) => {
     Alert.alert(
       'Eliminar pieza',
@@ -16,41 +19,64 @@ export default function ListaPiezas({ piezas, onAgregar, onEliminar, onVerDetall
     );
   };
 
-  const renderItem = ({ item }) => (
-    <TouchableHighlight
-      underlayColor="#2a2a2a"
-      onPress={() => onVerDetalle(item)}
-      style={styles.itemWrapper}
-    >
-      <View style={styles.item}>
-        <View style={styles.itemInfo}>
-          <Text style={styles.tipo}>{item.tipo}</Text>
-          <Text style={styles.fecha}>{item.fechaCambio}</Text>
-        </View>
-        <TouchableOpacity
-          style={styles.botonEliminar}
-          onPress={() => confirmarEliminar(item.id)}
-        >
-          <Text style={styles.botonEliminarTexto}>Eliminar</Text>
-        </TouchableOpacity>
+  // Renderiza cada item con diseño tipo timeline
+  const renderItem = ({ item, index }) => (
+    <View style={styles.timelineItem}>
+
+      {/* Columna izquierda: punto dorado y línea vertical conectora */}
+      <View style={styles.timelineColumna}>
+        <View style={styles.timelinePunto} />
+        {/* La línea solo aparece si no es el último item */}
+        {index < piezas.length - 1 && <View style={styles.timelineLinea} />}
       </View>
-    </TouchableHighlight>
+
+      {/* Tarjeta del item, TouchableHighlight detecta el toque para abrir el modal */}
+      <TouchableHighlight
+        underlayColor="#2a2a2a"
+        onPress={() => onVerDetalle(item)}
+        style={styles.cardWrapper}
+      >
+        <View style={styles.card}>
+          <View style={styles.cardContenido}>
+
+            {/* Información de la pieza */}
+            <View style={styles.cardInfo}>
+              <Text style={styles.tipo}>{item.tipo}</Text>
+              <Text style={styles.fecha}>{item.fechaCambio}</Text>
+            </View>
+
+            {/* Botón eliminar separado para evitar conflicto con el TouchableHighlight */}
+            <TouchableOpacity
+              style={styles.botonEliminar}
+              onPress={() => confirmarEliminar(item.id)}
+            >
+              <Text style={styles.botonEliminarTexto}>Eliminar</Text>
+            </TouchableOpacity>
+
+          </View>
+        </View>
+      </TouchableHighlight>
+
+    </View>
   );
 
   return (
     <View style={styles.container}>
       <Text style={styles.titulo}>Piezas</Text>
 
+      {/* Botón para navegar al formulario de registro */}
       <TouchableOpacity style={styles.botonAgregar} onPress={onAgregar}>
         <Text style={styles.botonAgregarTexto}>+ Agregar Pieza</Text>
       </TouchableOpacity>
 
+      {/* Si no hay piezas muestra mensaje, si hay muestra la FlatList */}
       {piezas.length === 0 ? (
         <View style={styles.vacioContainer}>
           <Text style={styles.vacio}>No hay piezas registradas</Text>
           <Text style={styles.vacioSub}>Toca "Agregar Pieza" para comenzar</Text>
         </View>
       ) : (
+        // FlatList renderiza la lista de piezas de forma eficiente
         <FlatList
           data={piezas}
           keyExtractor={(item) => item.id}
@@ -80,7 +106,7 @@ const styles = StyleSheet.create({
     padding: 14,
     borderRadius: 10,
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 25,
   },
   botonAgregarTexto: {
     color: '#121212',
@@ -105,22 +131,54 @@ const styles = StyleSheet.create({
   },
   lista: {
     paddingBottom: 20,
+    paddingLeft: 5,
   },
-  itemWrapper: {
+
+  // --- Estilos del timeline ---
+  timelineItem: {
+    flexDirection: 'row',    
+    marginBottom: 0,
+  },
+  timelineColumna: {
+    alignItems: 'center',
+    width: 24,
+    marginRight: 12,
+  },
+  timelinePunto: {
+    width: 14,
+    height: 14,
+    borderRadius: 7,
+    backgroundColor: '#FFD700',  
+    borderWidth: 2,
+    borderColor: '#FFD700',
+    marginTop: 18,               
+    zIndex: 1,
+  },
+  timelineLinea: {
+    width: 2,
+    flex: 1,                     
+    backgroundColor: '#FFD700',
+    opacity: 0.3,                
+    marginBottom: -2,
+  },
+
+  // --- Estilos de la card ---
+  cardWrapper: {
+    flex: 1,
     borderRadius: 12,
-    marginBottom: 10,
+    marginBottom: 12,
   },
-  item: {
+  card: {
+    backgroundColor: '#1E1E1E',
+    borderRadius: 12,
+    padding: 15,
+  },
+  cardContenido: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 15,
-    backgroundColor: '#1E1E1E',
-    borderRadius: 12,
-    borderLeftWidth: 4,
-    borderLeftColor: '#FFD700',
   },
-  itemInfo: {
+  cardInfo: {
     flex: 1,
   },
   tipo: {
