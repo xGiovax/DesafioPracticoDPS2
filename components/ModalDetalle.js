@@ -3,22 +3,29 @@ import {
   StyleSheet, TouchableOpacity, Button
 } from 'react-native';
 
+// Componente que muestra el detalle completo de una pieza en un modal
+// Se activa cuando piezaSeleccionada en App.js tiene un valor distinto de null
 export default function ModalDetalle({ pieza, onCerrar }) {
 
   return (
+    // visible es true cuando pieza no es null, false cuando es null
     <Modal
       visible={pieza !== null}
-      transparent={true}
-      animationType="fade"
-      onRequestClose={onCerrar}
+      transparent={true}        // Fondo semitransparente
+      animationType="fade"      // Animación de aparición
+      onRequestClose={onCerrar} // Maneja el botón físico de retroceso en Android
     >
+      {/* Fondo oscuro semitransparente detrás del modal */}
       <View style={styles.fondo}>
         <View style={styles.modal}>
 
           <Text style={styles.titulo}>Detalle de la pieza</Text>
 
+          {/* Muestra los datos solo si hay una pieza seleccionada */}
           {pieza && (
             <View style={styles.detalles}>
+
+              {/* Cada fila muestra una etiqueta y su valor */}
               <View style={styles.fila}>
                 <Text style={styles.etiqueta}>Pieza</Text>
                 <Text style={styles.valor}>{pieza.tipo}</Text>
@@ -50,13 +57,14 @@ export default function ModalDetalle({ pieza, onCerrar }) {
             </View>
           )}
 
-             <View style={styles.botonCerrar}>
+          {/* Botón nativo de React Native para cerrar el modal */}
+          <View style={styles.botonCerrar}>
             <Button
-             title="Cerrar"
-            color="#FFD700"
-             onPress={onCerrar}
-             />
-            </View>         
+              title="Cerrar"
+              color="#FFD700"
+              onPress={onCerrar}
+            />
+          </View>
 
         </View>
       </View>
@@ -110,15 +118,6 @@ const styles = StyleSheet.create({
     textAlign: 'right',
   },
   botonCerrar: {
-    backgroundColor: '#FFD700',
-    padding: 14,
-    borderRadius: 10,
-    alignItems: 'center',
     marginTop: 15,
-  },
-  botonCerrarTexto: {
-    color: '#121212',
-    fontWeight: 'bold',
-    fontSize: 15,
   },
 });
